@@ -82,7 +82,7 @@ namespace Blooding.Runtime.Player
                 knifeCount--;
                 knifeAnimationTimers[knifeCount % 4] = 0.0f;
                 var sp = knifes[knifeCount % 4].transform;
-                Instantiate(knifeProjectile, sp.position, mainCamera.transform.rotation);
+                Instantiate(knifeProjectile, mainCamera.transform.position + mainCamera.transform.forward * 0.5f, mainCamera.transform.rotation);
             }
             
             for (var i = 0; i < knifes.Length; i++)

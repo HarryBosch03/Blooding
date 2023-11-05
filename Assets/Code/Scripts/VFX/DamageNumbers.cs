@@ -56,6 +56,7 @@ namespace Blooding.Runtime.VFX
         public void Spawn(Vector3 point, int damage)
         {
             var sceneObject = Instantiate(prefab, transform);
+            sceneObject.gameObject.SetActive(true);
             sceneObject.text = damage.ToString();
             instances.Add(new NumberInstance(sceneObject, point, damage, startForce));
         }
@@ -77,7 +78,7 @@ namespace Blooding.Runtime.VFX
                 this.damage = damage;
                 startTime = Time.time;
 
-                var a = (Random.value * 90.0f - 45.0f) * Mathf.Deg2Rad;
+                var a = (Random.value - 0.5f) * 45.0f * Mathf.Deg2Rad;
                 velocity = new Vector2(Mathf.Sin(a), Mathf.Cos(a)) * startForce;
             }
 
@@ -90,8 +91,9 @@ namespace Blooding.Runtime.VFX
                     return true;
                 }
 
-                var screenPoint = camera.WorldToScreenPoint(point) + (Vector3)position;
-                sceneObject.rectTransform.position = screenPoint;
+                var screenPoint = camera.WorldToScreenPoint(point);
+                if (screenPoint.z < 0.0f) return true;
+                sceneObject.rectTransform.position = screenPoint + (Vector3)position;
                 sceneObject.color = color.Evaluate(t);
                 
                 position += velocity * Time.deltaTime;

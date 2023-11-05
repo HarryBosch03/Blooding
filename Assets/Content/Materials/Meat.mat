@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Bone
+  m_Name: Meat
   m_Shader: {fileID: 4800000, guid: 697542e2d5574b8688270ebb0b8a9a46, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords:
@@ -75,7 +75,7 @@ Material:
     - _InvertNoise: 1
     - _Metallic: 0
     - _Mode: 0
-    - _NoiseContrast: -0.24
+    - _NoiseContrast: -0.43
     - _NoiseExp: 4
     - _NoiseScale: 20
     - _NoodleNoise: 1
@@ -87,7 +87,7 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _BaseColor: {r: 0.6132076, g: 0.54663306, b: 0.4535422, a: 1}
+    - _BaseColor: {r: 0.4056604, g: 0.16822498, b: 0.13547523, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecularColor: {r: 1, g: 1, b: 1, a: 0}
