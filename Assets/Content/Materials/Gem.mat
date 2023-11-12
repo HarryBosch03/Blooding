@@ -75,7 +75,7 @@ Material:
     - _InvertNoise: 1
     - _Metallic: 0
     - _Mode: 0
-    - _NoiseContrast: -0.79
+    - _NoiseContrast: -0.3
     - _NoiseExp: 4
     - _NoiseScale: 20
     - _NoodleNoise: 1
@@ -87,8 +87,8 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _BaseColor: {r: 0.41372538, g: 0, b: 0.5, a: 1}
+    - _BaseColor: {r: 0.3764706, g: 0, b: 0, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _SpecularColor: {r: 0.8257952, g: 0, b: 1, a: 1}
+    - _SpecularColor: {r: 0.8235294, g: 0, b: 0, a: 0.4745098}
   m_BuildTextureStacks: []

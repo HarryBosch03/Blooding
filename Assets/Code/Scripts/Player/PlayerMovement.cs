@@ -22,9 +22,8 @@ namespace Blooding.Runtime.Player
         private InputActionReference jumpAction;
 
         private Rigidbody body;
-        private bool isOnGround;
         private RaycastHit groundHit;
-        
+
         private Camera mainCam;
         private Transform view;
         private Quaternion viewRotation;
@@ -32,7 +31,18 @@ namespace Blooding.Runtime.Player
         private bool jumpFlag;
 
         public Vector3 Gravity => Physics.gravity * gravityScale;
-        
+        public float CurrentSpeed
+        {
+            get
+            {
+                var vel = LocalVelocity;
+                return Mathf.Sqrt(vel.x * vel.x + vel.z * vel.z) / moveSpeed;
+            }
+        }
+        public bool IsOnGround { get ; private set; }
+
+        public Vector3 LocalVelocity => IsOnGround && groundHit.rigidbody ? body.velocity - groundHit.rigidbody.velocity : body.velocity;
+
         private void Awake()
         {
             body = gameObject.AddComponent<Rigidbody>();
@@ -50,12 +60,12 @@ namespace Blooding.Runtime.Player
             mainCam = Camera.main;
 
             view = transform.Find("View");
-            
+
             inputAsset.Enable();
-            
+
             moveAction = bind("Move");
             jumpAction = bind("Jump");
-            
+
             InputActionReference bind(string path) => InputActionReference.Create(inputAsset.FindAction(path));
         }
 
@@ -72,19 +82,19 @@ namespace Blooding.Runtime.Player
         private void Update()
         {
             if (jumpAction.action.WasPressedThisFrame()) jumpFlag = true;
-            
+
             var cameraRotationDelta = Vector2.zero;
 
             cameraRotationDelta += (Mouse.current?.delta.ReadValue() ?? Vector2.zero) * mouseSensitivity;
-            
+
             cameraRotation += cameraRotationDelta;
             cameraRotation.y = Mathf.Clamp(cameraRotation.y, -90.0f, 90.0f);
-            
+
             mainCam.transform.position = transform.position + Vector3.up * playerHeight;
             mainCam.transform.rotation = Quaternion.Euler(-cameraRotation.y, cameraRotation.x, 0.0f);
 
             viewRotation = Quaternion.Slerp(viewRotation, mainCam.transform.rotation, viewSmoothing * Time.deltaTime);
-            
+
             view.transform.position = mainCam.transform.position;
             view.transform.rotation = viewRotation;
         }
@@ -96,7 +106,7 @@ namespace Blooding.Runtime.Player
             Jump();
 
             jumpFlag = false;
-            
+
             transform.rotation = Quaternion.Euler(0.0f, cameraRotation.x, 0.0f);
             if (body.useGravity) body.AddForce(Gravity - Physics.gravity, ForceMode.Acceleration);
         }
@@ -104,30 +114,32 @@ namespace Blooding.Runtime.Player
         private void CheckForGround()
         {
             var ray = new Ray(body.position + Vector3.up, Vector3.down);
-            isOnGround = Physics.Raycast(ray, out groundHit, 1.0f);
-            if (!isOnGround) return;
-            
+            IsOnGround = Physics.Raycast(ray, out groundHit, 1.0f);
+            if (!IsOnGround) return;
+
             body.position += groundHit.normal * Vector3.Dot(groundHit.normal, groundHit.point - body.position);
             body.velocity += groundHit.normal * Mathf.Max(0.0f, -Vector3.Dot(groundHit.normal, body.velocity));
+
+            if (groundHit.rigidbody) body.position += groundHit.rigidbody.velocity * Time.deltaTime;
         }
 
         private void Move()
         {
             var acceleration = 2.0f / accelerationTime;
-            if (!isOnGround) acceleration *= 1.0f - airAccelerationPenalty;
-            
+            if (!IsOnGround) acceleration *= 1.0f - airAccelerationPenalty;
+
             var input = moveAction.action?.ReadValue<Vector2>() ?? Vector2.zero;
             var target = transform.TransformVector(input.x, 0.0f, input.y) * moveSpeed;
-            var force = (target - body.velocity) * acceleration;
+            var force = (target - LocalVelocity) * acceleration;
             force.y = 0.0f;
-            
+
             body.AddForce(force);
         }
 
         private void Jump()
         {
             if (!jumpFlag) return;
-            if (!isOnGround) return;
+            if (!IsOnGround) return;
 
             var gravity = -Gravity.y;
             var force = Vector3.up * Mathf.Sqrt(2.0f * gravity * jumpHeight);

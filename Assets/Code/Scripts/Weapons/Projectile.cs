@@ -40,7 +40,7 @@ namespace Blooding.Runtime.Weapons
                 if (detach)
                 {
                     detach.SetParent(null);
-                    Destroy(detach, detachLifetime);
+                    Destroy(detach.gameObject, detachLifetime);
                 }
 
                 if (impactPrefab) Instantiate(impactPrefab, hit.point, transform.rotation);
